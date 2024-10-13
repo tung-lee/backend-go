@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"net/http"
+	c "backend-go/internal/controller"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,50 +11,22 @@ func NewRouter() *gin.Engine {
 
 	v1 := r.Group("/v1")
 	{
-		v1.GET("/ping", Pong)
-		v1.GET("/ping/query", PongWithQuery)
-		v1.GET("/ping/:name", PongWithName)
-		v1.POST("/ping", Pong)
-		v1.PUT("/ping", Pong)
-		v1.PATCH("/ping", Pong)
-		v1.DELETE("/ping", Pong)
-		v1.HEAD("/ping", Pong)
-		v1.OPTIONS("/ping", Pong)
+		v1.GET("/ping", c.NewPongController().Pong)
+		v1.GET("/user", c.NewUserController().GetUser)
+		// v1.GET("/ping/query", controller.PongWithQuery)
+		// v1.GET("/ping/:name", controller.PongWithName)
+		// v1.POST("/ping", controller.Pong)
+		// v1.PUT("/ping", controller.Pong)
+		// v1.PATCH("/ping", controller.Pong)
+		// v1.DELETE("/ping", controller.Pong)
+		// v1.HEAD("/ping", controller.Pong)
+		// v1.OPTIONS("/ping", controller.Pong)
 	}
 
 	v2 := r.Group("/v2")
 	{
-		v2.GET("/ping", Pong)
-		v2.GET("/ping/query", PongWithQuery)
-		v2.GET("/ping/:name", PongWithName)
-		v2.POST("/ping", Pong)
-		v2.PUT("/ping", Pong)
-		v2.PATCH("/ping", Pong)
-		v2.DELETE("/ping", Pong)
-		v2.HEAD("/ping", Pong)
-		v2.OPTIONS("/ping", Pong)
+		v2.GET("/ping", c.NewPongController().Pong)
 	}
 
 	return r
-}
-
-func Pong(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "pong",
-		"users":   []string{"Alex", "John", "Jane"},
-	})
-}
-
-func PongWithName(c *gin.Context) {
-	name := c.Param("name")
-	c.JSON(http.StatusOK, gin.H{
-		"message": "pong with name: " + name,
-	})
-}
-
-func PongWithQuery(c *gin.Context) {
-	uid := c.Query("uid")
-	c.JSON(http.StatusOK, gin.H{
-		"message": "pong with query: " + uid,
-	})
 }
