@@ -1,9 +1,10 @@
 package main
 
-import (
-	"fmt"
-)
+import "backend-go/internal/routers"
 
 func main() {
-	fmt.Println("Starting server...")
+	r := routers.NewRouter()
+
+	r.Run(":8082") // default listen and serve on 0.0.0.0:8080
 }
+
