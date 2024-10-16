@@ -1,58 +1,43 @@
 package initialization
 
 import (
-	"fmt"
-	"github.com/gin-gonic/gin"
+	"backend-go/global"
+	"backend-go/internal/routers"
 
-	c "backend-go/internal/controller"
-	"backend-go/internal/middlewares"
+	"github.com/gin-gonic/gin"
 )
 
-func AA() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		fmt.Println("Before -> AA")
-		c.Next()
-		fmt.Println("After -> AA")
-	}
-}
-
-func BB() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		fmt.Println("Before -> BB")
-		c.Next()
-		fmt.Println("After -> BB")
-	}
-}
-
-func CC(c *gin.Context) {
-	fmt.Println("Before -> CC")
-	c.Next()
-	fmt.Println("After -> CC")
-}
- 
 func InitRouter() *gin.Engine {
-	r := gin.Default()
-
-	r.Use(middlewares.AuthMiddleware, AA(), BB(), CC)
-
-	v1 := r.Group("/v1")
-	{
-		v1.GET("/ping", c.NewPongController().Pong)
-		v1.GET("/user", c.NewUserController().GetUser)
-		// v1.GET("/ping/query", controller.PongWithQuery)
-		// v1.GET("/ping/:name", controller.PongWithName)
-		// v1.POST("/ping", controller.Pong)
-		// v1.PUT("/ping", controller.Pong)
-		// v1.PATCH("/ping", controller.Pong)
-		// v1.DELETE("/ping", controller.Pong)
-		// v1.HEAD("/ping", controller.Pong)
-		// v1.OPTIONS("/ping", controller.Pong)
+	var r *gin.Engine
+	if global.Config.Server.Mode == "dev" {
+		gin.SetMode(gin.DebugMode)
+		gin.ForceConsoleColor()
+		r = gin.Default()
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+		r = gin.New()
 	}
 
-	v2 := r.Group("/v2")
-	{
-		v2.GET("/ping", c.NewPongController().Pong)
-	}
+	// middlewares
+	// r.Use() // logging
+	// r.Use() // cors
+	// r.Use() // limiter global
 
+	adminRouter := routers.RouterGroupApp.Admin
+	userRouter := routers.RouterGroupApp.User
+
+	MainGroup := r.Group("/v1/2024")
+	{
+		MainGroup.GET("/health") // health check
+	}
+	{
+		userRouter.InitProductRouter(MainGroup)
+		userRouter.InitUserRouter(MainGroup)
+	}
+	{
+		adminRouter.InitAdminRouter(MainGroup)
+		adminRouter.InitUserRouter(MainGroup)
+	}
+	
 	return r
 }
