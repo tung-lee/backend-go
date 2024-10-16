@@ -8,16 +8,21 @@ import (
 )
 
 type UserController struct {
-	userService *service.UserService
+	userService service.IUserService
 }
 
-func NewUserController() *UserController {
+func NewUserController(userService service.IUserService) *UserController {
 	return &UserController{
-		userService: service.NewUserService(),
+		userService: userService,
 	}
 }
 
-func (uc *UserController) GetUser(c *gin.Context) {
-	// response.SuccessResponse(c, response.Success, []string{"m10", "cr7"})
-	response.ErrorResponse(c, response.ParamInvalid)
+func (uc *UserController) Register(c *gin.Context) {
+	 systemStatusCode := uc.userService.Register("", "")
+	 response.SuccessResponse(c, systemStatusCode, nil)
 }
+
+// func (uc *UserController) GetUser(c *gin.Context) {
+// 	// response.SuccessResponse(c, response.Success, []string{"m10", "cr7"})
+// 	response.ErrorResponse(c, response.ParamInvalid)
+// }
