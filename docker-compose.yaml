@@ -6,7 +6,7 @@ services:
       MYSQL_ROOT_PASSWORD: admin
       MYSQL_DATABASE: backend-go
     ports:
-      - '3308:3306' # host port 3306 used for local so use 3308 for docker in host
+      - "3308:3306" # host port 3306 used for local so use 3308 for docker in host
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
@@ -14,6 +14,20 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  redis:
+    image: redis:7.4
+    container_name: backend-go-redis
+    ports:
+      - "6381:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped # Auto-restart Redis on failure
+    healthcheck:
+      test: ["CMD", "redis-cli", "-p", "6381", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
 volumes:
   mysql_data:
+  redis_data:

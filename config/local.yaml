@@ -16,3 +16,8 @@ logger:
   maxBackups: 3
   maxAge: 28
   compress: true
+redis:
+  host: localhost
+  port: 6381
+  password: ""
+  database: 0
