@@ -1,9 +1,10 @@
 package user
 
 import (
-	"backend-go/internal/controller"
-	"backend-go/internal/repo"
-	"backend-go/internal/service"
+	// "backend-go/internal/controller"
+	// "backend-go/internal/repo"
+	// "backend-go/internal/service"
+	"backend-go/internal/wire"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,13 +15,16 @@ func (ur *UserRouter) InitUserRouter(router *gin.RouterGroup) {
 	// public router
 	  
 	// non-dependency
-	urepo := repo.NewUserRepository()
-	us := service.NewUserService(urepo)
-	ucNonDependency := controller.NewUserController(us)
+	// urepo := repo.NewUserRepository()
+	// us := service.NewUserService(urepo)
+	// ucNonDependency := controller.NewUserController(us)
+
+	// dependency injection
+	userController, _ := wire.InitUserRouterHandler()
 	
 	userRouterPublic := router.Group("/user") 
 	{
-		userRouterPublic.POST("/register", ucNonDependency.Register)
+		userRouterPublic.POST("/register", userController.Register)
 		userRouterPublic.POST("/otp")
 	}
 
